@@ -5,7 +5,7 @@ search template image (smaller) in a main image (bigger)
 # Usage
 
 ```javascript
-findImage("./image/1.png", "./image/3.png", {
+findImage("./1.png", "./3.png", {
   startPoint: [1, 1],
   endPoint: [899, 407],
   output: "./output.png",
