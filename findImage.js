@@ -10,11 +10,9 @@ const images = require("images");
 const compareSimilarity = require("./compareSimilarity");
 class imageFinder {
 
-  constructor(fatherImageInfo, sonImageInfo, options = {}) {
-    this.fatherNode = {}
-    this.sonNode = {}
-    this.setFather(fatherImageInfo);
-    this.setSon(sonImageInfo);
+  constructor(fatherNode, sonNode, options = {}) {
+    this.fatherNode = fatherNode
+    this.sonNode = sonNode
     this.setSonConner();
     this.options = options;
     this.startPoint = options.startPoint ? options.startPoint : [0, 0];
@@ -75,30 +73,6 @@ class imageFinder {
       fatherData[offset + 2] != this.sonNode.conner[i][2] ||
       fatherData[offset + 3] != this.sonNode.conner[i][3]
   }
-  setFather(info) {
-    if (typeof (info) == 'string') {
-      const fatherImage = images(info);
-      this.fatherNode.width = fatherImage.width();
-      this.fatherNode.height = fatherImage.height();
-      this.fatherNode.data = fatherImage.encode("raw").slice(12)
-      return;
-    }
-    this.fatherNode = info;
-  }
-  setSon(info) {
-    if (typeof (info) == 'string') {
-      const sonImage = images(info);
-      const width = sonImage.width();
-      const height = sonImage.height();
-      if (width <= 8 || height <= 8) throw new Error('image height or width must be over 8 ')
-      this.sonNode.width = width
-      this.sonNode.height = height;
-      this.sonNode.data = sonImage.encode("raw").slice(12)
-      return;
-    }
-    this.sonNode = info;
-
-  }
   setSonConner() {
     const width = this.sonNode.width;
     const height = this.sonNode.height;
@@ -121,7 +95,17 @@ class imageFinder {
 
 module.exports = {
   findImage: function findImage(fatherImageSrc, sonImageSrc, options) {
-    return new imageFinder(fatherImageSrc, sonImageSrc, options).find();
+    const fatherImage = images(fatherImageSrc);
+    const sonImage = images(sonImageSrc)
+    return new imageFinder({
+      data: fatherImage.encode("raw").slice(12),
+      width: fatherImage.width(),
+      height: fatherImage.height(),
+    }, {
+      data: sonImage.encode("raw").slice(12),
+      width: sonImage.width(),
+      height: sonImage.height(),
+    }, options).find();
   },
   imageFinder: imageFinder
 }
