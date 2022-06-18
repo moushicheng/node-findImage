@@ -9,5 +9,5 @@
 const { findImage, imageFinder } = require("../index");
 const path = require('path');
 console.log(
-    findImage(path.join(__dirname, "./image/1.png"), path.join(__dirname, "./image/3.png"))
+    findImage(path.join(__dirname, "./image/1.png"), path.join(__dirname, "./image/2.png"))
 );

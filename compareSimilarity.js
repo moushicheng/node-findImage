@@ -16,13 +16,12 @@ module.exports = function compareSimilarity(_mainImage, _searchImage) {
   return (64 - hamming(mainHash, searchHash)) / 64
 };
 
-function preProcess(image) {
-
-  const imageData = image.size(8, 8).encode("raw").slice(12);
+function preProcess(imageData) {
+  //缩小图片至8*8
   let totalGray = 0;
   for (let i = 0; i < imageData.length; i += 4) {
     const gray = Math.floor(
-      (0.299 * imageData[i] + 0.587 * imageData[i + 1] + 0.114 * imageData[i + 2]) / 4
+      (0.33 * imageData[i] + 0.33 * imageData[i + 1] + 0. * imageData[i + 2]) / 4
     );
     imageData[i] = gray;
     imageData[i + 1] = gray;

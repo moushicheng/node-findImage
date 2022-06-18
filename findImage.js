@@ -25,14 +25,10 @@ class imageFinder {
       for (let j = this.startPoint[0]; j < this.endPoint[0]; j++) {
         if (this.isSameCorner(j, i)) {
           const result = compareSimilarity(
-            this.sonNode.image,
-            images(this.fatherNode.image, j, i, this.sonNode.width, this.sonNode.height)
+            this.sonNode.data,
+            this.getFatherBufferInSonSize(j, i)
           )
-
           if (result > 0.9) {
-            if (this.options.output) {
-              images(this.fatherNode.image, j, i, this.sonNode.width, this.sonNode.height).save(this.options.output);
-            }
             return {
               x: j,
               y: i
@@ -41,6 +37,17 @@ class imageFinder {
         }
       }
     }
+  }
+  getFatherBufferInSonSize(x, y) {
+    const data = this.fatherNode.data.slice(12);
+    const fatherArea = new ArrayBuffer();
+    let z = 0;
+    for (let i = y; i < y + this.sonNode.height; i++) {
+      for (let j = x * 4; j < (x + this.sonNode.width) * 4; j++) {
+        fatherArea[z++] = data[i * this.fatherNode.width * 4 + j]
+      }
+    }
+    return fatherArea
   }
 
   isSameCorner(x, y) {
@@ -63,8 +70,6 @@ class imageFinder {
   }
   comparePoint(offset, i) {
     const fatherData = this.fatherNode.data;
-    //image.js框架的毛病，前12位不是rgba数据,所以使offset再偏移12
-    offset = offset + 12;
     return fatherData[offset] != this.sonNode.conner[i][0] ||
       fatherData[offset + 1] != this.sonNode.conner[i][1] ||
       fatherData[offset + 2] != this.sonNode.conner[i][2] ||
@@ -73,10 +78,9 @@ class imageFinder {
   setFather(info) {
     if (typeof (info) == 'string') {
       const fatherImage = images(info);
-      this.fatherNode.image = fatherImage;
       this.fatherNode.width = fatherImage.width();
       this.fatherNode.height = fatherImage.height();
-      this.fatherNode.data = fatherImage.encode("raw");
+      this.fatherNode.data = fatherImage.encode("raw").slice(12)
       return;
     }
     this.fatherNode = info;
@@ -87,10 +91,9 @@ class imageFinder {
       const width = sonImage.width();
       const height = sonImage.height();
       if (width <= 8 || height <= 8) throw new Error('image height or width must be over 8 ')
-      this.sonNode.image = sonImage
       this.sonNode.width = width
       this.sonNode.height = height;
-      this.sonNode.data = sonImage.encode("raw");
+      this.sonNode.data = sonImage.encode("raw").slice(12)
       return;
     }
     this.sonNode = info;
@@ -111,8 +114,6 @@ class imageFinder {
       getPoints(middleBottom + Math.floor(width / 2) * 4)//中间点
     ]
     function getPoints(offset) {
-      //image.js框架的毛病，前12位不是rgba数据,所以使offset再偏移12
-      offset = offset + 12;
       return [data[offset], data[offset + 1], data[offset + 2], data[offset + 3]]
     }
   }
