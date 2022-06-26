@@ -1,0 +1,23 @@
+{
+  "name": "findimage",
+  "version": "1.0.0",
+  "description": "search template image (smaller) in a main image (bigger)",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "nodemon test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moushicheng/node-findImage.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/moushicheng/node-findImage/issues"
+  },
+  "homepage": "https://github.com/moushicheng/node-findImage#readme",
+  "dependencies": {}
+}

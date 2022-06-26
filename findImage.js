@@ -7,13 +7,20 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 const images = require("images");
-const compareSimilarity = require("./compareSimilarity");
+// const comparer = require("./compareSimilarity");
+const {compareSimilarity,comparer} = require("./compareSimilarity");
+
 class imageFinder {
 
   constructor(fatherNode, sonNode, options = {}) {
-    this.fatherNode = fatherNode
-    this.sonNode = sonNode
-    this.setSonConner();
+    this.comparer=new comparer()
+    if(fatherNode){
+      this.fatherNode = fatherNode
+    }
+    if(sonNode){
+      this.setSon(sonNode)
+    }
+
     this.options = options;
     this.startPoint = options.startPoint ? options.startPoint : [0, 0];
     this.endPoint = options.endPoint ? options.endPoint : [this.fatherNode.width, this.fatherNode.height]
@@ -22,10 +29,19 @@ class imageFinder {
     for (let i = this.startPoint[1]; i < this.endPoint[1]; i++) {
       for (let j = this.startPoint[0]; j < this.endPoint[0]; j++) {
         if (this.isSameCorner(j, i)) {
-          const result = compareSimilarity(
-            this.sonNode.data,
-            this.getFatherBufferInSonSize(j, i)
-          )
+          // const result = compareSimilarity(
+          //   this.getFatherBufferInSonSize(j, i),
+          //   this.sonNode.data
+          // )
+          // console.log(result);
+          const fatherHash=this.comparer.setHash({
+            data:this.getFatherBufferInSonSize(j, i),
+            width:this.sonNode.width,
+            height:this.sonNode.height
+          });
+          const sonHash=this.sonNode['hash']
+          const length=this.sonNode.data.length;
+          const result=(length-this.comparer.hamming(fatherHash,sonHash))/ length
           if (result > 0.9) {
             return {
               x: j,
@@ -35,6 +51,7 @@ class imageFinder {
         }
       }
     }
+    return 'no find'
   }
   getFatherBufferInSonSize(x, y) {
     const data = this.fatherNode.data.slice(12);
@@ -45,6 +62,7 @@ class imageFinder {
         fatherArea[z++] = data[i * this.fatherNode.width * 4 + j]
       }
     }
+    fatherArea.length=z;
     return fatherArea
   }
 
@@ -73,6 +91,11 @@ class imageFinder {
       fatherData[offset + 2] != this.sonNode.conner[i][2] ||
       fatherData[offset + 3] != this.sonNode.conner[i][3]
   }
+  setSon(node){
+    this.sonNode = node;
+    this.setSonConner();
+    this.comparer.setHash(node);
+  }
   setSonConner() {
     const width = this.sonNode.width;
     const height = this.sonNode.height;
@@ -97,15 +120,18 @@ module.exports = {
   findImage: function findImage(fatherImageSrc, sonImageSrc, options) {
     const fatherImage = images(fatherImageSrc);
     const sonImage = images(sonImageSrc)
+    const fatherData = fatherImage.encode("raw");
+    const sonData = sonImage.encode("raw");
+
     return new imageFinder({
-      data: fatherImage.encode("raw").slice(12),
+      data: fatherData.slice(12),
       width: fatherImage.width(),
       height: fatherImage.height(),
     }, {
-      data: sonImage.encode("raw").slice(12),
+      data: sonData.slice(12),
       width: sonImage.width(),
       height: sonImage.height(),
-    }, options).find();
+    }, options).find()
   },
   imageFinder: imageFinder
 }
