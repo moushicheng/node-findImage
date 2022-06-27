@@ -16,7 +16,7 @@ const path1=getImagePath("./image/1.png")
 const path2= getImagePath("./image/3.png")
 const time=new Date();
 const result= findImage(path1,path2)
-console.log(result,'in: '+(new Date()-time));
+console.log(result,'in: '+(new Date()-time)+'ms');
 
 
 

@@ -24,6 +24,7 @@ class imageFinder {
     this.options = options;
     this.startPoint = options.startPoint ? options.startPoint : [0, 0];
     this.endPoint = options.endPoint ? options.endPoint : [this.fatherNode.width, this.fatherNode.height]
+    this.precision=options.precision?options.precision:0.9
   }
   find() {
     for (let i = this.startPoint[1]; i < this.endPoint[1]; i++) {
@@ -42,7 +43,7 @@ class imageFinder {
           const sonHash=this.sonNode['hash']
           const length=this.sonNode.data.length;
           const result=(length-this.comparer.hamming(fatherHash,sonHash))/ length
-          if (result > 0.9) {
+          if (result >  this.precision) {
             return {
               x: j,
               y: i
