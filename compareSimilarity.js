@@ -32,6 +32,8 @@ class comparer {
       totalGray += gray;
       total++;
     }
+  
+    console.log(totalGray,total);
     return {
       buffer: imageData,
       grayAverage: Math.floor(totalGray / total),

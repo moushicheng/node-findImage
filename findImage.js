@@ -54,28 +54,28 @@ class imageFinder {
     return 'no find'
   }
   getFatherBufferInSonSize(x, y) {
-    const data = this.fatherNode.data.slice(12);
-    const fatherArea = new ArrayBuffer();
+    const data = this.fatherNode.data
+    const fatherArea = []
     let z = 0;
     for (let i = y; i < y + this.sonNode.height; i++) {
       for (let j = x * 4; j < (x + this.sonNode.width) * 4; j++) {
         fatherArea[z++] = data[i * this.fatherNode.width * 4 + j]
       }
     }
-    fatherArea.length=z;
+
     return fatherArea
   }
 
   isSameCorner(x, y) {
     //超出边界则退出
-    if (x >= this.fatherNode.width - this.sonNode.width || y >= this.fatherNode.height - this.sonNode.height) {
+    if (x > this.fatherNode.width - this.sonNode.width || y > this.fatherNode.height - this.sonNode.height) {
       return false;
     }
 
     const right = (this.sonNode.width - 1) * 4;
     const bottom = ((this.sonNode.height - 1) * this.fatherNode.width) * 4
     const middleBottom = Math.floor(this.sonNode.height / 2) * this.fatherNode.width * 4
-    const offset = x * 4 + ((y - 1) * this.fatherNode.width) * 4; //offsetX+offsetY
+    const offset = x * 4 + (y * this.fatherNode.width) * 4; //offsetX+offsetY
 
     if (this.comparePoint(offset, 0)) return false;
     if (this.comparePoint(offset + right, 1)) return false;
@@ -112,6 +112,11 @@ class imageFinder {
     ]
     function getPoints(offset) {
       return [data[offset], data[offset + 1], data[offset + 2], data[offset + 3]]
+    }
+  }
+  print(data,i,j){
+    for(let k=i;k<j;k+=4){
+      console.log(data[k],data[k+1],data[k+2],data[k+3]);
     }
   }
 }
