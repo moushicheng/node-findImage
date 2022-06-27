@@ -9,9 +9,14 @@
 const { findImage, imageFinder } = require("../index");
 const path = require('path');
 // const images = require('images')
-console.log(
-    findImage(path.join(__dirname, "./image/3.png"), path.join(__dirname, "./image/3.png"))
-);
+function getImagePath(src){
+    return path.join(__dirname,src)
+}
+const path1=getImagePath("./image/1.png")
+const path2= getImagePath("./image/3.png")
+const time=new Date();
+const result= findImage(path1,path2)
+console.log(result,'in: '+(new Date()-time));
 
 
 
